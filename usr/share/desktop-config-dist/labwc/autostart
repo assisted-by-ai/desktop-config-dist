@@ -6,11 +6,11 @@
 dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY > /dev/null 2>&1 &
 
 # Workaround: Restart wlr-resize-watcher so it attaches to the new Wayland
-# session. LXQt logout does not properly close the systemd user session, so the
-# service keeps running from a previous session and no longer tracks resolution
-# changes. The clean fix would be for the service to be session-scoped
-# (BindsTo=graphical-session.target) or for wlr-resize-watcher to detect
-# compositor loss and exit.
+# session. systemd-logind's KillUserProcesses defaults to "no", so the service
+# persists across logout/login and stays attached to the dead compositor.
+# The clean fix (in vm-config-dist) would be for the service to be
+# session-scoped (BindsTo=graphical-session.target) or for wlr-resize-watcher
+# to detect compositor loss and exit.
 # https://forums.whonix.org/t/bug-wlr-resize-watcher-not-attaching-to-new-restarted-wayland-sessions/23136
 systemctl --user restart wlr-resize-watcher.service > /dev/null 2>&1 &
 
