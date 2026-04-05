@@ -3,7 +3,13 @@
 # Preferred place for starting wayland-only applications
 
 # Faster startup for GTK apps:
-dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY > /dev/null 2>&1 &
+dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY > /dev/null 2>&1
+
+# Restart wlr-resize-watcher so it attaches to the new Wayland session.
+# Without this, the service keeps running from a previous session after
+# LXQt logout/login and no longer tracks resolution changes.
+# https://forums.whonix.org/t/bug-wlr-resize-watcher-not-attaching-to-new-restarted-wayland-sessions/23136
+systemctl --user restart wlr-resize-watcher.service > /dev/null 2>&1 &
 
 # Configure output directives such as mode, position, scale and transform.
 # Use wlr-randr to get your output names
